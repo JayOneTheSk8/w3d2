@@ -67,7 +67,9 @@ VALUES
 INSERT INTO
   replies(question_id, user_id, body)
 VALUES
-  ((SELECT id FROM questions WHERE title LIKE '%Pizza%'), (SELECT id FROM users WHERE fname = 'Oliver'), 'Pepperoni');
+  ((SELECT id FROM questions WHERE title LIKE '%Pizza%'), (SELECT id FROM users WHERE fname = 'Oliver'), 'Pepperoni'),
+  ((SELECT id FROM questions WHERE title LIKE '%Drink%'), (SELECT id FROM users WHERE fname = 'Jay'), 'Iced Tea');
+
 
 INSERT INTO
   replies(question_id, parent_id, user_id, body)
@@ -75,18 +77,26 @@ VALUES
   ((SELECT id FROM questions WHERE title LIKE '%Pizza%'),
   (SELECT id FROM replies WHERE body = 'Pepperoni'),
   (SELECT id FROM users WHERE fname = 'Jay'),
-  'Cool');
+  'Cool'),
+  ((SELECT id FROM questions WHERE title LIKE '%Drink%'),
+  (SELECT id FROM replies WHERE body LIKE '%Iced%'),
+  (SELECT id FROM users WHERE fname = 'Darren'),
+  'Sweet');
 
+INSERT INTO
+  question_follows(user_id, question_id)
+VALUES
+  ((SELECT id FROM users WHERE fname = 'Oliver'),
+  (SELECT id FROM questions WHERE title LIKE '%Drink%')),
+  ((SELECT id FROM users WHERE fname = 'Darren'),
+  (SELECT id FROM questions WHERE title LIKE '%Pizza%')),
+  ((SELECT id FROM users WHERE fname = 'Jay'),
+  (SELECT id FROM questions WHERE title LIKE '%Drink%'));
 
-
-
-    -- CREATE TABLE replies (
-    --   id INTEGER PRIMARY KEY,
-    --   question_id INTEGER NOT NULL,
-    --   parent_id INTEGER,
-    --   user_id INTEGER NOT NULL,
-    --   body VARCHAR(255) NOT NULL,
-    --
-    --   FOREIGN KEY (question_id) REFERENCES questions(id),
-    --   FOREIGN KEY (parent_id) REFERENCES replies(id),
-    --   FOREIGN KEY (user_id) REFERENCES users(id)
+INSERT INTO
+  question_likes(user_id, question_id)
+VALUES
+  ((SELECT id FROM users WHERE fname = 'Jay'),
+  (SELECT id FROM questions WHERE title LIKE '%Drink%')),
+  ((SELECT id FROM users WHERE fname = 'Darren'),
+  (SELECT id FROM questions WHERE title LIKE '%Pizza%'));
