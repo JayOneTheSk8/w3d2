@@ -53,6 +53,26 @@ class QuestionFollow
     questions.map { |question| Question.find_by_id(question['question_id']) }
   end
 
+  def self.most_followed_questions(n = 1)
+    questions = QuestionsDatabase.instance.execute(<<-SQL, n)
+      SELECT
+        *, COUNT(question_id)
+      FROM
+        question_follows
+      JOIN
+        questions ON question_follows.question_id = questions.id
+      GROUP BY
+        question_id
+      LIMIT
+        1
+      OFFSET
+        ? - 1;
+    SQL
+    return nil if questions.empty?
+    byebug
+    Question.find_by_id(questions.first['question_id'])
+  end
+
   def initialize(options)
     @id, @user_id, @question_id = options.values_at('id', 'user_id', 'question_id')
   end
